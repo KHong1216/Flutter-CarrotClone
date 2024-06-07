@@ -1,0 +1,30 @@
+{
+  "project_info": {
+    "project_number": "472616071636",
+    "firebase_url": "https://flutter-carrot-default-rtdb.firebaseio.com",
+    "project_id": "flutter-carrot",
+    "storage_bucket": "flutter-carrot.appspot.com"
+  },
+  "client": [
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:472616071636:android:ae9497058c65ce6ea22641",
+        "android_client_info": {
+          "package_name": "com.example.carrot_clone"
+        }
+      },
+      "oauth_client": [],
+      "api_key": [
+        {
+          "current_key": "AIzaSyD3FAIQy84henS6jVi52r-wdKS6eaZwzvc"
+        }
+      ],
+      "services": {
+        "appinvite_service": {
+          "other_platform_oauth_client": []
+        }
+      }
+    }
+  ],
+  "configuration_version": "1"
+}

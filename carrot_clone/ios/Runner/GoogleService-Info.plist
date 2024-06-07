@@ -1,0 +1,36 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE plist PUBLIC "-//Apple//DTD PLIST 1.0//EN" "http://www.apple.com/DTDs/PropertyList-1.0.dtd">
+<plist version="1.0">
+<dict>
+	<key>CLIENT_ID</key>
+	<string>472616071636-vr40ovk2hvcubhlnf2a76kve0tc6n4pk.apps.googleusercontent.com</string>
+	<key>REVERSED_CLIENT_ID</key>
+	<string>com.googleusercontent.apps.472616071636-vr40ovk2hvcubhlnf2a76kve0tc6n4pk</string>
+	<key>API_KEY</key>
+	<string>AIzaSyCeRI8zPazNPH3zEimpIpaFL7yFZ_kd_A4</string>
+	<key>GCM_SENDER_ID</key>
+	<string>472616071636</string>
+	<key>PLIST_VERSION</key>
+	<string>1</string>
+	<key>BUNDLE_ID</key>
+	<string>com.example.carrotClone</string>
+	<key>PROJECT_ID</key>
+	<string>flutter-carrot</string>
+	<key>STORAGE_BUCKET</key>
+	<string>flutter-carrot.appspot.com</string>
+	<key>IS_ADS_ENABLED</key>
+	<false></false>
+	<key>IS_ANALYTICS_ENABLED</key>
+	<false></false>
+	<key>IS_APPINVITE_ENABLED</key>
+	<true></true>
+	<key>IS_GCM_ENABLED</key>
+	<true></true>
+	<key>IS_SIGNIN_ENABLED</key>
+	<true></true>
+	<key>GOOGLE_APP_ID</key>
+	<string>1:472616071636:ios:1e34764f35d96413a22641</string>
+	<key>DATABASE_URL</key>
+	<string>https://flutter-carrot-default-rtdb.firebaseio.com</string>
+</dict>
+</plist>
