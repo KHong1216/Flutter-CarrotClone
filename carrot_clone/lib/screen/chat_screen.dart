@@ -31,56 +31,42 @@ class _ChatScreenState extends State<ChatScreen> {
             final chatDocs = snapshot.data!.docs;
             final recentChats = _getRecentChats(chatDocs);
             return ListView.builder(
-                itemBuilder: (context, index) {
-                  final chat = recentChats[index];
-                  return GestureDetector(
-                      child: Column(
-                        children: [
-                          Row(
-                            children: [
-                              SizedBox(
-                                width: 50,
-                                height: 50,
-                                child: Icon(
-                                  Icons.person,
-                                  size: 50,
-                                ),
-                              ),
-                              Column(
-                                children: [
-                                  Text(chat['to'] ==
-                                          FirebaseAuth
-                                              .instance.currentUser!.email
-                                      ? (chat['from'] !=
-                                              FirebaseAuth
-                                                  .instance.currentUser!.email
-                                          ? chat['from']
-                                          : chat['to'])
-                                      : (chat['from'] ==
-                                              FirebaseAuth
-                                                  .instance.currentUser!.email
-                                          ? chat['to']
-                                          : chat['from'])),
-                                  SizedBox(
-                                    height: 10,
-                                  ),
-                                  Text(chat['text'])
-                                ],
-                              )
-                            ],
-                          )
-                        ],
+              itemBuilder: (context, index) {
+                final chat = recentChats[index];
+                return GestureDetector(
+                  onTap: () {
+                    Navigator.of(context).push(MaterialPageRoute(
+                        builder: (context) => ChattingScreen(
+                            id: chat['productId'],
+                            name: chat['product'],
+                            sellUser: chat['sellUser'],
+                            price: chat['price'])));
+                  },
+                  child: ListTile(
+                    leading: SizedBox(
+                      width: 50,
+                      height: 50,
+                      child: Icon(
+                        Icons.person,
+                        size: 50,
                       ),
-                      onTap: () {
-                        Navigator.of(context).push(MaterialPageRoute(
-                            builder: (context) => ChattingScreen(
-                                id: chat['productId'],
-                                name: chat['product'],
-                                sellUser: chat['sellUser'],
-                                price: chat['price'])));
-                      });
-                },
-                itemCount: recentChats.length);
+                    ),
+                    title: Text(
+                        chat['to'] == FirebaseAuth.instance.currentUser!.email
+                            ? (chat['from'] !=
+                                    FirebaseAuth.instance.currentUser!.email
+                                ? chat['from']
+                                : chat['to'])
+                            : (chat['from'] ==
+                                    FirebaseAuth.instance.currentUser!.email
+                                ? chat['to']
+                                : chat['from'])),
+                    subtitle: Text(chat['text']),
+                  ),
+                );
+              },
+              itemCount: recentChats.length,
+            );
           }
         },
       ),
@@ -91,28 +77,40 @@ class _ChatScreenState extends State<ChatScreen> {
 List<QueryDocumentSnapshot> _getRecentChats(
     List<QueryDocumentSnapshot> chatDocs) {
   final currentUserEmail = FirebaseAuth.instance.currentUser!.email;
-  final recentChatsMap = <String, QueryDocumentSnapshot>{};
+  final recentChats = <String, Map<String, QueryDocumentSnapshot>>{};
 
   for (var chatDoc in chatDocs) {
     final to = chatDoc['to'];
     final from = chatDoc['from'];
+    final productId = chatDoc['productId'];
 
+    // 채팅 상대가 현재 사용자와 관련된 채팅인지 확인
     if (to == currentUserEmail || from == currentUserEmail) {
       final otherUser = to == currentUserEmail ? from : to;
-      final existingChat = recentChatsMap[otherUser];
+      final existingChatsByProduct =
+          recentChats.putIfAbsent(otherUser, () => {});
 
-      // 최근 채팅이 없거나 현재 채팅이 더 최근일 경우 갱신
-      final Timestamp chatTimestamp = chatDoc['timestamp'] as Timestamp;
-      final DateTime chatDateTime = chatTimestamp.toDate();
+      if (existingChatsByProduct[productId] == null) {
+        // 해당 사용자와의 최초의 제품별 채팅인 경우에만 추가
+        existingChatsByProduct[productId] = chatDoc;
+      } else {
+        // 이미 존재하는 제품별 채팅과 비교하여 최신 채팅 선택
+        final existingChat = existingChatsByProduct[productId]!;
+        final existingTimestamp = existingChat['timestamp'] as Timestamp;
+        final chatTimestamp = chatDoc['timestamp'] as Timestamp;
 
-      final DateTime? existingChatDateTime = existingChat != null
-          ? (existingChat['timestamp'] as Timestamp).toDate()
-          : null;
-
-      if (existingChat == null || chatDateTime.isAfter(existingChatDateTime!)) {
-        recentChatsMap[otherUser] = chatDoc;
+        if (chatTimestamp.compareTo(existingTimestamp) > 0) {
+          existingChatsByProduct[productId] = chatDoc;
+        }
       }
     }
   }
-  return recentChatsMap.values.toList();
+
+  // 결과를 평면화하여 최신 채팅 목록을 반환
+  final List<QueryDocumentSnapshot> recentChatsFlat = [];
+  recentChats.values.forEach((chatMap) {
+    recentChatsFlat.addAll(chatMap.values);
+  });
+
+  return recentChatsFlat;
 }
